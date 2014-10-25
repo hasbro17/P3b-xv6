@@ -8,6 +8,7 @@
 int
 main(int argc, char *argv[])
 {
-  printf(1, "%s", "** Placeholder program for grading scripts **\n");
+  int *p =0;
+  printf(1, "%Pointer=%d\n",*p);
   exit();
 }
