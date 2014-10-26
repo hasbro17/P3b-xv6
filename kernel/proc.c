@@ -141,6 +141,7 @@ fork(void)
     np->state = UNUSED;
     return -1;
   }
+  np->stackTop = proc->stackTop;//Copy the stackTop as well
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
@@ -274,7 +275,7 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
-      switchkvm();
+	  switchkvm();
 
       // Process is done running for now.
       // It should have changed its p->state before coming back.

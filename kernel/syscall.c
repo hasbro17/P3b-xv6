@@ -17,7 +17,8 @@
 int
 fetchint(struct proc *p, uint addr, int *ip)
 {
-  if(addr >= p->sz || addr+4 > p->sz)
+  //if(addr >= p->sz || addr+4 > p->sz)
+  if((addr >= p->sz && addr < p->stackTop) || (addr+4 > p->sz && addr+4 < p->stackTop))//allow it to fetch from the new stack region as well
     return -1;
   *ip = *(int*)(addr);
   return 0;
@@ -31,13 +32,32 @@ fetchstr(struct proc *p, uint addr, char **pp)
 {
   char *s, *ep;
 
-  if(addr >= p->sz)
+/*
+  //if(addr >= p->sz)
+  if(addr >= p->sz && addr < p->stackTop)
     return -1;
   *pp = (char*)addr;
   ep = (char*)p->sz;
   for(s = *pp; s < ep; s++)
     if(*s == 0)
       return s - *pp;
+*/
+
+  *pp = (char*)addr;
+  ep = (char*)p->sz;
+  if((addr<p->sz)&&(addr>=PGSIZE))//if fetching string from code or head segment, though i don't think it ever does. so maybe remove this
+  {
+	  for(s = *pp; s < ep; s++)
+		  if(*s == 0)
+			  return s - *pp;
+  }
+  else if((addr>=p->stackTop)&&(addr<USERTOP))//FIXME: should it be USERTOP-1?
+  {
+	  for(s = *pp; s<(char*)USERTOP;s++)
+		  if(*s ==0)
+			  return s - *pp;
+  }
+
   return -1;
 }
 
@@ -58,7 +78,8 @@ argptr(int n, char **pp, int size)
   
   if(argint(n, &i) < 0)
     return -1;
-  if((uint)i >= proc->sz || (uint)i+size > proc->sz)
+  //if( (uint)i >= proc->sz || (uint)i+size > proc->sz )
+  if( ( (uint)i >= proc->sz && (uint)i < proc->stackTop ) || ( (uint)i+size > proc->sz && (uint)i+size < proc->stackTop ) || ((uint)i<PGSIZE) || ((uint)i+size>USERTOP) )//if address anywhere outside segments
     return -1;
   *pp = (char*)i;
   return 0;

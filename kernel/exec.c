@@ -47,14 +47,16 @@ exec(char *path, char **argv)
   }
   iunlockput(ip);
   ip = 0;
+  sz = PGROUNDUP(sz);//Heap starts after code segment
 
-  // Allocate a one-page stack at the next page boundary
-  sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + PGSIZE)) == 0)
-    goto bad;
+  //Allocate a one-page stack at the end of the process space boundary USERTOP
+  if((sp = allocuvm(pgdir, USERTOP-PGSIZE, USERTOP)) == 0)
+	goto bad;
+
+  proc->stackTop=USERTOP-PGSIZE;//keep track of the top of the stack
 
   // Push argument strings, prepare rest of stack in ustack.
-  sp = sz;
+  //sp=sz;
   for(argc = 0; argv[argc]; argc++) {
     if(argc >= MAXARG)
       goto bad;
