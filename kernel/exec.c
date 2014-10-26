@@ -85,7 +85,7 @@ exec(char *path, char **argv)
   // Commit to the user image.
   oldpgdir = proc->pgdir;
   proc->pgdir = pgdir;
-  proc->sz = sz;
+  proc->sz = sz ; 
   proc->tf->eip = elf.entry;  // main
   proc->tf->esp = sp;
   switchuvm(proc);

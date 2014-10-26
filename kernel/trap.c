@@ -86,20 +86,25 @@ trap(struct trapframe *tf)
     lapiceoi();
     break;
   case T_PGFLT:
-    // Check if stack expansion required	  
-    if(rcr2()>=proc->stackTop-PGSIZE) {
-//	  cprintf("PAGE FAULT!! on address %x when STACKTOP=%x\n",rcr2(),proc->stackTop);
-	  cprintf("Will a new stack page please stand up?");
-	  //Extend stack by another page
-	  if((proc->tf->esp = allocuvm(proc->pgdir, proc->stackTop-PGSIZE, proc->stackTop)) == 0) { // How should sp be changed? check for guard pages!
-	    cprintf("Stack Full!\n");
-	    proc->killed = 1;
-	  }
-	  proc->stackTop-=PGSIZE;//keep track of the top of the stack
-    } // Else regular old Page Fault! 
+    // Check if stack expansion required	 
+    cprintf("addr=%x stacktop=%x heap end=%x\n",rcr2(), proc->stackTop, proc->sz); 
+    //Extend stack by another page
+    if(rcr2()>=proc->stackTop-PGSIZE && proc->stackTop > proc->sz+PGSIZE) { //proc->sz is the end of heap, so checking to ensure one guard page exists
+      if((proc->tf->esp = allocuvm(proc->pgdir, proc->stackTop-PGSIZE, proc->stackTop)) == 0) { //FIXME How should sp be changed? 
+        cprintf("Stack Full!\n");
+	proc->killed = 1;
+      }
+      proc->stackTop-=PGSIZE;//keep track of the top of the stack
+      cprintf("stackTop=%x\n",proc->stackTop);
+    }
+    // Else if Guard page check fails-> 
+    else if(rcr2()>=proc->stackTop-PGSIZE && proc->stackTop <= proc->sz+PGSIZE) { //proc->sz is the end of heap, so checking to ensure one guard page exists
+        cprintf("Stack Full!\n"); // Should this be segmentation fault too?
+	proc->killed = 1;
+    }// Else regular old Page Fault! 
     else {
-	  cprintf("SEGMENTATION FAULT\n");
-	  proc->killed = 1;
+      cprintf("SEGMENTATION FAULT\n");
+      proc->killed = 1;
     }
     break;  
   default:
