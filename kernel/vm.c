@@ -79,7 +79,6 @@ mappages(pde_t *pgdir, void *la, uint size, uint pa, int perm)
 {
   char *a, *last;
   pte_t *pte;
-  
   a = PGROUNDDOWN(la);
   last = PGROUNDDOWN(la + size - 1);
   for(;;){
