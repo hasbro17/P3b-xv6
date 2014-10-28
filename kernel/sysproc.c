@@ -50,13 +50,14 @@ sys_sbrk(void)
   if(argint(0, &n) < 0)
     return -1;
   addr = proc->sz;
+//  cprintf("stackTop=%x, n=%d, addr=%x\n",proc->stackTop, n, addr);
   if(proc->stackTop >= addr+n+PGSIZE) {
     if(growproc(n) < 0)
       return -1;
   }
   else {
 //    proc->killed=1;	  
-    return -1;	  
+    return -1;	     
   }
   return addr;
 }

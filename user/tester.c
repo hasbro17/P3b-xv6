@@ -9,7 +9,8 @@ int i;
 int
 main(int argc, char *argv[])
 {
-  int p[1000];
+	sbrk(-4096);
+/*  int p[1000];
 // Trying an old fashioned stack overflow attack!
   addr = p;
   for(i=0; i<200; i++) {
@@ -19,7 +20,7 @@ main(int argc, char *argv[])
 	printf(1, "Address=%x Stack Entry=%d\n",addr, *addr);
   }
  
-/*  int *p=0;
+  int *p=0;
   printf(1,"SEG FAULT HERE=>%d", *p);
   */
   exit();
