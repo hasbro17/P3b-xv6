@@ -364,8 +364,37 @@ sys_exec(void)
     if(fetchstr(proc, uarg, &argv[i]) < 0)
       return -1;
   }
-  return exec(path, argv);
+  return exec(path, argv, 0); //Adding the max_stack_pages option with 0
 }
+
+int
+sys_new_exec(void)
+{
+  char *path, *argv[MAXARG];
+  int max_stack_pages;
+  int i;
+  uint uargv, uarg;
+
+  if(argstr(0, &path) < 0 || argint(1, &max_stack_pages)  || argint(2, (int*)&uargv) < 0){
+    return -1;
+  }
+  cprintf("max_stack_pages=%d\n",max_stack_pages);
+  memset(argv, 0, sizeof(argv));
+  for(i=0;; i++){
+    if(i >= NELEM(argv))
+      return -1;
+    if(fetchint(proc, uargv+4*i, (int*)&uarg) < 0)
+      return -1;
+    if(uarg == 0){
+      argv[i] = 0;
+      break;
+    }
+    if(fetchstr(proc, uarg, &argv[i]) < 0)
+      return -1;
+  }
+  return exec(path, argv, max_stack_pages);
+}
+
 
 int
 sys_pipe(void)

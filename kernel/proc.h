@@ -61,7 +61,8 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
 struct proc {
-  uint stackTop;
+  int stackLimit;	       // Maximum number of stack pages	
+  uint stackTop;	       // Lower Limit of the Stack currently
   uint sz;                     // Size of process memory (bytes)
   pde_t* pgdir;                // Page table
   char *kstack;                // Bottom of kernel stack for this process

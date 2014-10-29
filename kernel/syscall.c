@@ -107,6 +107,7 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_dup]     sys_dup,
 [SYS_exec]    sys_exec,
+[SYS_new_exec] sys_new_exec,
 [SYS_exit]    sys_exit,
 [SYS_fork]    sys_fork,
 [SYS_fstat]   sys_fstat,

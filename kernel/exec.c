@@ -7,7 +7,7 @@
 #include "elf.h"
 
 int
-exec(char *path, char **argv)
+exec(char *path, char **argv, int max_stack_pages)
 {
   char *s, *last;
   int i, off;
@@ -47,13 +47,14 @@ exec(char *path, char **argv)
   }
   iunlockput(ip);
   ip = 0;
-  sz = PGROUNDUP(sz);//Heap starts after code segment
+  sz = PGROUNDUP(sz);// Heap starts after code segment and TODO FIXME a guard page, Yo extra credit!
 
   //Allocate a one-page stack at the end of the process space boundary USERTOP
   if((sp = allocuvm(pgdir, USERTOP-PGSIZE, USERTOP)) == 0)
 	goto bad;
 
   proc->stackTop=USERTOP-PGSIZE;//keep track of the top of the stack
+  proc->stackLimit=max_stack_pages;
 
   // Push argument strings, prepare rest of stack in ustack.
   //sp=sz;

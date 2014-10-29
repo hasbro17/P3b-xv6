@@ -94,6 +94,11 @@ trap(struct trapframe *tf)
         cprintf("Stack Full!\n");
 	proc->killed = 1;
       }
+      cprintf("Stack page size=%d\n",(USERTOP-proc->stackTop)/PGSIZE);
+      if( proc->stackLimit > 0 && (USERTOP-proc->stackTop)/PGSIZE > proc->stackLimit){
+        cprintf("Stack Full!\n");
+	proc->killed = 1;
+      }
       proc->stackTop-=PGSIZE;//keep track of the top of the stack
       cprintf("stackTop=%x\n",proc->stackTop);
     }
