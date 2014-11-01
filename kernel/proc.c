@@ -143,6 +143,7 @@ fork(void)
   }
   np->stackLimit = proc->stackLimit;//Copy the stackLimit as well
   np->stackTop = proc->stackTop;//Copy the stackTop as well
+  np->codeEnd = proc->codeEnd;//Copy the codeEnd as well
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;

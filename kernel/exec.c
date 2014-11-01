@@ -47,7 +47,9 @@ exec(char *path, char **argv, int max_stack_pages)
   }
   iunlockput(ip);
   ip = 0;
-  sz = PGROUNDUP(sz);// Heap starts after code segment and TODO FIXME a guard page, Yo extra credit!
+  sz=PGROUNDUP(sz);//round up to the end of the code page
+  proc->codeEnd=sz;
+  sz = PGROUNDUP(sz+PGSIZE);// Heap segment one page  after code segment and TODO FIXME a guard page, Yo extra credit!
 
   //Allocate a one-page stack at the end of the process space boundary USERTOP
   if((sp = allocuvm(pgdir, USERTOP-PGSIZE, USERTOP)) == 0)
