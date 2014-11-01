@@ -32,7 +32,7 @@ exec(char *path, char **argv, int max_stack_pages)
     goto bad;
 
   // Load program into memory.
-  sz = PGSIZE-1;
+  sz = PGSIZE;
   for(i=0, off=elf.phoff; i<elf.phnum; i++, off+=sizeof(ph)){
     if(readi(ip, (char*)&ph, off, sizeof(ph)) != sizeof(ph))
       goto bad;
@@ -44,13 +44,16 @@ exec(char *path, char **argv, int max_stack_pages)
       goto bad;
     if(loaduvm(pgdir, (char*)ph.va, ip, ph.offset, ph.filesz) < 0)
       goto bad;
+cprintf("sz after code alloc=%x\n",sz);
   }
   iunlockput(ip);
   ip = 0;
   sz=PGROUNDUP(sz);//round up to the end of the code page
   proc->codeEnd=sz;
+  cprintf("codeEnd->%x\n",proc->codeEnd);
   sz = PGROUNDUP(sz+PGSIZE);// Heap segment one page  after code segment and TODO FIXME a guard page, Yo extra credit!
-
+  cprintf("Heapbegin->%x\n",sz);
+  
   //Allocate a one-page stack at the end of the process space boundary USERTOP
   if((sp = allocuvm(pgdir, USERTOP-PGSIZE, USERTOP)) == 0)
 	goto bad;
