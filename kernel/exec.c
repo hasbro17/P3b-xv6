@@ -55,7 +55,8 @@ exec(char *path, char **argv, int max_stack_pages)
 
   proc->stackTop=USERTOP-PGSIZE;//keep track of the top of the stack
   proc->stackLimit=max_stack_pages;
-
+  cprintf("stackLimit->%d\n",proc->stackLimit);
+   
   // Push argument strings, prepare rest of stack in ustack.
   //sp=sz;
   for(argc = 0; argv[argc]; argc++) {
