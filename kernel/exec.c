@@ -44,7 +44,6 @@ exec(char *path, char **argv, int max_stack_pages)
       goto bad;
     if(loaduvm(pgdir, (char*)ph.va, ip, ph.offset, ph.filesz) < 0)
       goto bad;
-cprintf("sz after code alloc=%x\n",sz);
   }
   iunlockput(ip);
   ip = 0;
