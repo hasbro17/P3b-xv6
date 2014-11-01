@@ -21,7 +21,9 @@ USER_PROGS := \
 	new_exec\
 	exec_helper\
 	exec_helper2\
-	exec_helper3
+	exec_helper3\
+	code_heap_guard\
+	codeheapguard
 
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
